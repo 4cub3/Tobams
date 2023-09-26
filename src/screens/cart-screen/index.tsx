@@ -5,14 +5,19 @@ import { CartList } from "@/component/cart-component";
 import { CartContext } from "@/store/cart-context";
 import { Label } from "@/shared";
 import { gray, white } from "@/constants/colors";
-type Props = {};
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { ParamsList } from "@/types/general-types";
+type Props = {
+  navigation: BottomTabNavigationProp<ParamsList , 'cart'>
 
-const Cart = (props: Props) => {
+};
+
+const Cart = ({navigation}: Props) => {
   const { cart,totalAmount } = useContext(CartContext);
   return (
     <>
       <Container>
-        <CartList data={cart!} />
+        <CartList data={cart!}  navigation={navigation}/>
       </Container>
       {cart?.length! > 0 && (
         <View style={styles.foot}>
