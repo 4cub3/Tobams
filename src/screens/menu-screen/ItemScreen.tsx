@@ -7,7 +7,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { ParamsList } from "@/types/general-types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import {
@@ -24,6 +24,7 @@ import { PRODUCT_DATA } from "@/utils/product-data";
 import { tomatoRed, white } from "@/constants/colors";
 import { TouchableOpacity } from "react-native";
 import { Slider } from "@/component/menu-component";
+import { CartContext } from "@/store/cart-context";
 
 type Props = {
   navigation?: StackNavigationProp<ParamsList, "item">;
@@ -45,6 +46,7 @@ const ItemScreen = ({ navigation, route }: Props) => {
     storageInformation,
   } = productItem!;
   const data = [image, image, image];
+  const { addItemToCart } = useContext(CartContext);
   return (
     <>
       <ScrollView
@@ -88,19 +90,18 @@ const ItemScreen = ({ navigation, route }: Props) => {
                 <BodyText>{nutritionalInforamtion} </BodyText>
               </Dropdown>
               <Dropdown title={"How to Prepare"}>
-            
-                  <View style={{ gap: 5, marginVertical: 10 }}>
-                    {howToPrepare.map((item, idx) => {
-                      return (
-                        <BodyText
-                          key={idx}
-                          textStyle={{ textTransform: "capitalize" }}
-                        >
-                          - {item}
-                        </BodyText>
-                      );
-                    })}
-                  </View>
+                <View style={{ gap: 5, marginVertical: 10 }}>
+                  {howToPrepare.map((item, idx) => {
+                    return (
+                      <BodyText
+                        key={idx}
+                        textStyle={{ textTransform: "capitalize" }}
+                      >
+                        - {item}
+                      </BodyText>
+                    );
+                  })}
+                </View>
               </Dropdown>
               <Dropdown title={"Dietary Information"}>
                 <BodyText>{dietaryInforamation}</BodyText>
@@ -118,7 +119,18 @@ const ItemScreen = ({ navigation, route }: Props) => {
       <View style={styles.foot}>
         <Counter containerStyle={{ marginBottom: 20 }} />
         <View style={{ gap: 16 }}>
-          <Button>Add to Cart</Button>
+          <Button
+            onPress={() => {
+              addItemToCart({
+                amount: +price,
+                quantity: 1,
+                id,
+                item: productItem!,
+              });
+            }}
+          >
+            Add to Cart
+          </Button>
           <Button type="outlined">Subscribt to a plan</Button>
         </View>
       </View>

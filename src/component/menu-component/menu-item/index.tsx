@@ -1,38 +1,32 @@
-import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState, useContext } from "react";
 import { ProductType } from "@/utils/product-data";
 import { Button, Favourite, Label } from "@/shared";
 import { tomatoRed } from "@/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { ParamsList, Path } from "@/types/general-types";
+import { CartContext } from "@/store/cart-context";
 interface Props {
   item: ProductType;
-  navigation?: BottomTabNavigationProp<ParamsList, 'bottomTab'>
+  navigation?: BottomTabNavigationProp<ParamsList, "bottomTab">;
 }
 
-const MenuItem = ({ item , navigation}: Props) => {
-  const {
-    description,
-    dietaryInforamation,
-    extra,
-    howToPrepare,
-    image,
-    ingredients,
-    nutritionalInforamtion,
-    price,
-    storageInformation,
-    title,
-    id,
-  } = item;
+const MenuItem = ({ item, navigation }: Props) => {
+  const { image, price, title, id } = item;
   const [favourite, setFavourite] = useState<string>();
+  const { addItemToCart } = useContext(CartContext);
+
   const onClickFavourite = () => {
     setFavourite(id);
   };
   return (
-    <TouchableOpacity style={styles.container} onPress={()=>{
-        navigation?.navigate(Path.ITEM, {id})
-    }}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => {
+        navigation?.navigate(Path.ITEM, { id });
+      }}
+    >
       <Favourite
         style={styles.favouriteStyle}
         favourite={favourite === id}
@@ -51,12 +45,20 @@ const MenuItem = ({ item , navigation}: Props) => {
         </Label>
         <Label textStyle={{ color: tomatoRed }}>{price}</Label>
       </View>
-      <Button textStyle={{gap:5}} containerStyle={{width: '100%', paddingVertical:6}}>
+      <Button
+        textStyle={{ gap: 5 }}
+        containerStyle={{ width: "100%", paddingVertical: 6 }}
+        onPress={() => {
+          addItemToCart({ amount: +price, id, item, quantity: 1 });
+        }}
+      >
         <Image
           source={require("@app/assets/item-icon/heroicons_shopping-bag.png")}
           style={{ width: 20, height: 20 }}
         />
-        <Text style={{fontSize:12, fontFamily:'poppins-regular'}}>Add to cart</Text>
+        <Text style={{ fontSize: 12, fontFamily: "poppins-regular" }}>
+          Add to cart
+        </Text>
       </Button>
     </TouchableOpacity>
   );
